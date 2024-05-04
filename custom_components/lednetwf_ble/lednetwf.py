@@ -141,8 +141,8 @@ class LEDNETWFInstance:
         self._color_mode = ColorMode.HS
         self._write_uuid = None
         self._read_uuid = None
-        self._turn_on_cmd = [bytearray.fromhex("00 04 80 00 00 0d 0e 0b 3b 23 00 00 00 00 00 00 00 32 00 00 90")]
-        self._turn_off_cmd = [bytearray.fromhex("00 04 80 00 00 0d 0e 0b 3b 23 00 00 00 00 00 00 00 32 00 00 91")]
+        self._turn_on_cmd = bytearray.fromhex("00 04 80 00 00 0d 0e 0b 3b 23 00 00 00 00 00 00 00 32 00 00 90")
+        self._turn_off_cmd = bytearray.fromhex("00 04 80 00 00 0d 0e 0b 3b 23 00 00 00 00 00 00 00 32 00 00 91")
         self._max_color_temp_kelvin = None
         self._min_color_temp_kelvin = None
         self._model = self._detect_model()
@@ -159,8 +159,8 @@ class LEDNETWFInstance:
         x = 0
         for name in NAME_ARRAY:
             if self._device.name.lower().startswith(name.lower()):
-                # self._turn_on_cmd = TURN_ON_CMD[x]
-                # self._turn_off_cmd = TURN_OFF_CMD[x]
+                self._turn_on_cmd = TURN_ON_CMD[x]
+                self._turn_off_cmd = TURN_OFF_CMD[x]
                 self._max_color_temp_kelvin = MAX_COLOR_TEMPS_K[x]
                 self._min_color_temp_kelvin = MIN_COLOR_TEMPS_K[x]
                 return x
@@ -380,13 +380,15 @@ class LEDNETWFInstance:
 
     @retry_bluetooth_connection_error
     async def turn_on(self):
-        await self._write(self._turn_on_cmd)
-        self._is_on = True
+        if self._turn_on_cmd is bytearray:
+            await self._write(bytearray(self._turn_on_cmd))
+            self._is_on = True
 
     @retry_bluetooth_connection_error
     async def turn_off(self):
-        await self._write(self._turn_off_cmd)
-        self._is_on = False
+        if self._turn_off_cmd is bytearray:
+            await self._write(bytearray(self._turn_off_cmd))
+            self._is_on = False
 
     @retry_bluetooth_connection_error
     async def update(self):
