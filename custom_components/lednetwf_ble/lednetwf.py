@@ -141,8 +141,10 @@ class LEDNETWFInstance:
         self._color_mode = ColorMode.HS
         self._write_uuid = None
         self._read_uuid = None
-        self._turn_on_cmd = None
-        self._turn_off_cmd = None
+        # self._turn_on_cmd = None
+        self._turn_on_cmd = bytearray.fromhex("00 04 80 00 00 0d 0e 0b 3b 23 00 00 00 00 00 00 00 32 00 00 90")
+        # self._turn_off_cmd = None
+        self._turn_off_cmd = bytearray.fromhex("00 04 80 00 00 0d 0e 0b 3b 23 00 00 00 00 00 00 00 32 00 00 91")
         self._max_color_temp_kelvin = None
         self._min_color_temp_kelvin = None
         self._model = self._detect_model()
